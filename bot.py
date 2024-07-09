@@ -1,24 +1,28 @@
 import asyncio
-import logging
-from aiogram import Bot, Dispatcher
-from aiogram.filters import CommandStart
+from aiogram import Bot, Dispatcher, F
+from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.storage.memory import MemoryStorage
-import json
-
 from handlers import registration, exchange, tips, finances
+from keyboards.default import main_keyboard
+import json
+import logging
 
 # Загрузка конфигурации из файла config.json
 with open('config.json', 'r', encoding='utf-8') as config_file:
     config = json.load(config_file)
 
-TOKEN = config['API_TOKEN']
+API_TOKEN = config['API_TOKEN']
 
 # Настройка логирования
-logging.basicConfig(level=logging.INFO, filename='logs/bot.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.FileHandler('logs/bot.log'), logging.StreamHandler()]
+)
 
-# Инициализация бота и диспетчера
-bot = Bot(token=TOKEN)
+# Создание объекта бота и диспетчера
+bot = Bot(token=API_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 
 # Регистрация хэндлеров
@@ -28,9 +32,9 @@ dp.include_router(tips.router)
 dp.include_router(finances.router)
 
 # Команда /start
-@dp.message(CommandStart())
+@dp.message(Command("start"))
 async def send_welcome(message: Message):
-    await message.answer("Привет! Я ваш личный финансовый помощник. Выберите одну из опций в меню.", reply_markup=registration.keyboard)
+    await message.answer("Привет! Я ваш личный финансовый помощник. Выберите одну из опций в меню.", reply_markup=main_keyboard)
 
 async def main():
     await dp.start_polling(bot)

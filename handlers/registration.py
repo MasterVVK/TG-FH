@@ -1,29 +1,26 @@
 import sqlite3
 from aiogram import Router, F
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
-from db.database import get_cursor, get_conn
+from aiogram.types import Message
 
 router = Router()
 
-# Создание клавиатуры
-button_registr = KeyboardButton(text="Регистрация в телеграм-боте")
-button_exchange_rates = KeyboardButton(text="Курс валют")
-button_tips = KeyboardButton(text="Советы по экономии")
-button_finances = KeyboardButton(text="Личные финансы")
+# Создание базы данных
+conn = sqlite3.connect('user.db')
+cursor = conn.cursor()
 
-keyboard = ReplyKeyboardMarkup(keyboard=[
-    [button_registr, button_exchange_rates],
-    [button_tips, button_finances]
-], resize_keyboard=True)
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    telegram_id INTEGER UNIQUE,
+    name TEXT
+)
+''')
+conn.commit()
 
-@router.message(F.text == "Регистрация в телеграм-боте")
+@router.message(F.text == "Регистрация в телеграм боте")
 async def registration(message: Message):
     telegram_id = message.from_user.id
     name = message.from_user.full_name
-
-    cursor = get_cursor()
-    conn = get_conn()
-
     cursor.execute('''SELECT * FROM users WHERE telegram_id = ?''', (telegram_id,))
     user = cursor.fetchone()
     if user:
