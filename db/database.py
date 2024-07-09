@@ -1,8 +1,12 @@
+# db/database.py
+
 import sqlite3
 
+# Создание соединения с базой данных и создание курсора
 conn = sqlite3.connect('db/user.db')
 cursor = conn.cursor()
 
+# Создание таблицы пользователей, если она не существует
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
@@ -18,8 +22,10 @@ CREATE TABLE IF NOT EXISTS users (
 ''')
 conn.commit()
 
+# Функция для получения курсора
 def get_cursor():
     return cursor
 
+# Функция для получения соединения
 def get_conn():
     return conn
