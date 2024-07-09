@@ -17,7 +17,7 @@ async def registration(message: Message):
 
     cursor.execute('''SELECT * FROM users WHERE telegram_id = ?''', (telegram_id,))
     user = cursor.fetchone()
-    logging.debug(f"Результат запроса SELECT: {user}")
+    logging.info(f"Результат запроса SELECT: {user}")
     if user:
         await message.answer("Вы уже зарегистрированы!")
     else:
