@@ -69,6 +69,7 @@ async def finances_category3(message: Message, state: FSMContext):
 
 @router.message(FinancesForm.expenses3)
 async def finances_expenses3(message: Message, state: FSMContext):
+    await state.update_data(expenses3=float(message.text))
     data = await state.get_data()
     telegram_id = message.from_user.id
     cursor = get_cursor()
@@ -76,8 +77,16 @@ async def finances_expenses3(message: Message, state: FSMContext):
     cursor.execute('''
         UPDATE users SET category1 = ?, expenses1 = ?, category2 = ?, expenses2 = ?, category3 = ?, expenses3 = ? WHERE telegram_id = ?
     ''', (
-    data['category1'], data['expenses1'], data['category2'], data['expenses2'], data['category3'], float(message.text),
+    data['category1'], data['expenses1'], data['category2'], data['expenses2'], data['category3'], data['expenses3'],
     telegram_id))
     conn.commit()
     await state.clear()
     await message.answer("Категории и расходы сохранены!")
+
+    result_message = (
+        f"Ваши расходы:\n"
+        f"Категория 1: {data['category1']} - {data['expenses1']} руб.\n"
+        f"Категория 2: {data['category2']} - {data['expenses2']} руб.\n"
+        f"Категория 3: {data['category3']} - {data['expenses3']} руб."
+    )
+    await message.answer(result_message)
