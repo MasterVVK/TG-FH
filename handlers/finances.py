@@ -41,7 +41,13 @@ async def finances_category1(message: Message, state: FSMContext):
 
 @router.message(FinancesForm.expenses1)
 async def finances_expenses1(message: Message, state: FSMContext):
-    await state.update_data(expenses1=float(message.text))
+    try:
+        expenses1 = float(message.text)
+    except ValueError:
+        await message.reply("Пожалуйста, введите числовое значение для расходов.")
+        return
+
+    await state.update_data(expenses1=expenses1)
     await state.set_state(FinancesForm.category2)
     await message.reply("Введите вторую категорию расходов:")
 
@@ -55,7 +61,13 @@ async def finances_category2(message: Message, state: FSMContext):
 
 @router.message(FinancesForm.expenses2)
 async def finances_expenses2(message: Message, state: FSMContext):
-    await state.update_data(expenses2=float(message.text))
+    try:
+        expenses2 = float(message.text)
+    except ValueError:
+        await message.reply("Пожалуйста, введите числовое значение для расходов.")
+        return
+
+    await state.update_data(expenses2=expenses2)
     await state.set_state(FinancesForm.category3)
     await message.reply("Введите третью категорию расходов:")
 
@@ -69,7 +81,13 @@ async def finances_category3(message: Message, state: FSMContext):
 
 @router.message(FinancesForm.expenses3)
 async def finances_expenses3(message: Message, state: FSMContext):
-    await state.update_data(expenses3=float(message.text))
+    try:
+        expenses3 = float(message.text)
+    except ValueError:
+        await message.reply("Пожалуйста, введите числовое значение для расходов.")
+        return
+
+    await state.update_data(expenses3=expenses3)
     data = await state.get_data()
     telegram_id = message.from_user.id
     cursor = get_cursor()
