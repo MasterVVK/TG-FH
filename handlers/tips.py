@@ -1,5 +1,5 @@
 import random
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
 
@@ -11,7 +11,7 @@ TIPS = [
     "Совет 3: Покупайте товары по скидкам и распродажам."
 ]
 
-@router.message(Command("tips"))
+@router.message(F.text == "Советы по экономии")
 async def send_tips(message: Message):
     tip = random.choice(TIPS)
     await message.answer(tip)
